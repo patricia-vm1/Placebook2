@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.Manifest
+import com.google.android.gms.location.LocationRequest
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -81,12 +82,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         ) {
             requestLocationPermissions()
         } else {
+            map.isMyLocationEnabled = true
             fusedLocationClient.lastLocation.addOnCompleteListener {
                 val location = it.result
                 if (location != null) {
                     val latLng = LatLng(location.latitude,location.longitude)
-                    map.addMarker(MarkerOptions().position(latLng)
-                        .title("You are here!"))
                     val update =CameraUpdateFactory.newLatLngZoom(latLng, 16.0f)
                     map.moveCamera(update)
                 } else{
