@@ -3,6 +3,9 @@ buildscript {
         extra["kotlin_version"] = "1.9.0"
         extra["maps_services_version"] = "18.1.0"
         extra["location_services_version"] = "21.0.1"
+        extra["lifecycle_version"] = "2.7.0"
+        extra["room_ version"] = "2.6.0"
+        extra["coroutines_verson"] = ""
 }
 
 plugins {
