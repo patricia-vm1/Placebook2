@@ -207,6 +207,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .snippet(place.phoneNumber)
         )
         marker?.tag = PlaceInfo(place, photo)
+        marker?.showInfoWindow()
          }
 
     private fun handleInfoWindowClick(marker: Marker) {
@@ -220,21 +221,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addPlaceMarker (
-        bookmark: MapsViewModel.BookMarkerView): Marker? {
+        bookmark: MapsViewModel.BookmarkMarkerView): Marker? {
 
         val marker = map.addMarker(MarkerOptions()
             .position(bookmark.location)
+            .title(bookmark.name)
+            .snippet(bookmark.phone)
             .icon(BitmapDescriptorFactory.defaultMarker(
-                BitmapDescriptorFactory.HUE_AZURE
-            ))
+                BitmapDescriptorFactory.HUE_AZURE))
             .alpha(0.8f))
         marker!!.tag = bookmark
-
         return marker
     }
 
     private fun displayAllBookmarks(
-        bookmarks: List<MapsViewModel.BookMarkerView>) {
+        bookmarks: List<MapsViewModel.BookmarkMarkerView>) {
         bookmarks.forEach { addPlaceMarker(it) }
     }
 
