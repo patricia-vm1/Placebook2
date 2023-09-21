@@ -228,7 +228,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 BitmapDescriptorFactory.HUE_AZURE
             ))
             .alpha(0.8f))
-        marker.tag = bookmark
+        marker!!.tag = bookmark
 
         return marker
     }
@@ -240,8 +240,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun createBookmarkMarkerObserver() {
         mapsViewModel.getBookmarkMarkerViews()?.observe(
-            this, {map.clear()
-                it?.let { displayAllBookmarks(it)}})
+            this
+        ) {
+            map.clear()
+            it?.let { displayAllBookmarks(it) }
+        }
     }
 
     companion object {
