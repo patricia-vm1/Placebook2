@@ -15,7 +15,8 @@ data class Bookmark (@PrimaryKey(autoGenerate = true) var id: Long? = null,
                      var address: String = "",
                      var latitude: Double = 0.0,
                      var longitude: Double = 0.0,
-                     var phone: String = "") {
+                     var phone: String = "",
+                     var notes: String = "") {
     fun setImage(image: Bitmap, context: Context) {
         id?.let {
             ImageUtils.saveBitmapToFile(context, image, generateImageFilename(it))
