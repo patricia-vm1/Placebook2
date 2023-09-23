@@ -2,6 +2,7 @@ package com.raywenderlich.placebook2.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
@@ -27,6 +28,12 @@ class BookmarkDetailsViewModel (application: Application) : AndroidViewModel(app
                 context,
                 Bookmark.generateImageFilename(it)
             )
+        }
+        fun setImage(context: Context, image: Bitmap) {
+            id?.let {
+                ImageUtils.saveBitmapToFile(context, image,
+                    Bookmark.generateImageFilename(it))
+            }
         }
     }
 
@@ -72,6 +79,9 @@ class BookmarkDetailsViewModel (application: Application) : AndroidViewModel(app
         GlobalScope.launch {
             val bookmark = bookmarkViewToBookmark(bookmarkView)
             bookmark?.let { bookmarkRepo.updateBookmark(it) }
-        } }
+        }
+    }
+
+
 
 }
