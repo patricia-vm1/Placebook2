@@ -19,7 +19,7 @@
         <activity
             android:name="com.raywenderlich.placebook2.ui.BookmarkDetailsActivity"
             android:label="Bookmark"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
@@ -39,7 +39,8 @@
         <activity
             android:name=".ui.MapsActivity"
             android:exported="true"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

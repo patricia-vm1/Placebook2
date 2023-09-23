@@ -12,6 +12,7 @@ import android.Manifest
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.lifecycle.Observer
 import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.places.api.Places
@@ -42,12 +43,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var placesClient: PlacesClient
     private val mapsViewModel by viewModels<MapsViewModel>()
+    private lateinit var databinding: ActivityMapsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMapsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        databinding = ActivityMapsBinding.inflate(layoutInflater)
+        setContentView(databinding.root)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -55,6 +57,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         setupLocationClient()
+        setupToolbar()
         setupPlacesClient()
     }
 
@@ -74,8 +77,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             handleInfoWindowClick(it)
         }
     }
-
-
 
     private fun setupPlacesClient() {
         Places.initialize(applicationContext, getString(R.string.google_maps_key))
@@ -264,6 +265,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val intent = Intent(this, BookmarkDetailsActivity::class.java)
         intent.putExtra(EXTRA_BOOKMARK_ID, bookmarkId)
         startActivity(intent)
+    }
+
+    private fun setupToolbar() {
+        setSupportActionBar(databinding.mainMapView.toolbar)
+        val toggle = ActionBarDrawerToggle(
+            this, databinding.drawerLayout,
+            databinding.mainMapView.toolbar,
+            R.string.open_drawer, R.string.close_drawer)
+        toggle.syncState()
     }
 
     companion object {
