@@ -7,8 +7,12 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import com.raywenderlich.placebook2.R
@@ -60,6 +64,7 @@ class BookmarkDetailsActivity : AppCompatActivity(),
 
                     databinding.bookmarkDetailsView = it
                     populateImageView()
+                    populateCategoryList()
                 }
             })
     }
@@ -80,6 +85,7 @@ class BookmarkDetailsActivity : AppCompatActivity(),
             bookmarkView.notes = databinding.editTextNotes.text.toString()
             bookmarkView.address = databinding.editTextAddress.text.toString()
             bookmarkView.phone = databinding.editTextPhone.text.toString()
+            bookmarkView.category = databinding.spinnerCategory.selectedItem as String
             bookmarkDetailsViewModel.updateBookmark(bookmarkView)
         }
         finish()
@@ -119,6 +125,10 @@ class BookmarkDetailsActivity : AppCompatActivity(),
                 saveChanges()
                 true
             }
+            R.id.action_delete -> {
+                deleteBookmark()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
 
@@ -132,6 +142,18 @@ class BookmarkDetailsActivity : AppCompatActivity(),
             databinding.imageViewPlace.setImageBitmap(image)
             it.setImage(this, image)
         }
+    }
+
+    private fun deleteBookmark()
+    {
+        val bookmarkView = bookmarkDetailsView ?: return
+        AlertDialog.Builder(this)
+            .setMessage("Delete?")
+            .setPositiveButton("Ok") { _, _ ->
+                bookmarkDetailsViewModel.deleteBookmark(bookmarkView)
+                finish() }
+            .setNegativeButton("Cancel", null)
+            .create().show()
     }
 
     private fun getImageWithPath(filePath: String) =
@@ -172,6 +194,40 @@ class BookmarkDetailsActivity : AppCompatActivity(),
             }
         }
     }
+
+    private fun populateCategoryList() {
+        val bookmarkView = bookmarkDetailsView ?: return
+        val resourceId = bookmarkDetailsViewModel.getCategoryResourceId(bookmarkView.category)
+
+        resourceId?.let  {databinding.imageViewCategory.setImageResource(it) }
+
+        val categories = bookmarkDetailsViewModel.getCategories()
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        databinding.spinnerCategory.adapter = adapter
+
+        val placeCategory = bookmarkView.category
+        databinding.spinnerCategory.setSelection(adapter.getPosition(placeCategory))
+
+        databinding.spinnerCategory.post {
+
+            databinding.spinnerCategory.onItemSelectedListener = object :
+                AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>, view:
+                View, position: Int, id: Long) {
+                    val category = parent.getItemAtPosition(position) as String
+                    val resourceId = bookmarkDetailsViewModel.getCategoryResourceId(category)
+                    resourceId?.let {
+                        databinding.imageViewCategory.setImageResource(it) }
+                }
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                }
+                }
+        }
+    }
+
 
     private fun getImageWithAuthority(uri: Uri) =
         ImageUtils.decodeUriStreamToSize(

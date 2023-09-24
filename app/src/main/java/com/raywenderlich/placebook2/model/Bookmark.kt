@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.media.Image
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.raywenderlich.placebook2.util.FileUtils
 import com.raywenderlich.placebook2.util.ImageUtils
 
 @Entity
@@ -16,10 +17,18 @@ data class Bookmark (@PrimaryKey(autoGenerate = true) var id: Long? = null,
                      var latitude: Double = 0.0,
                      var longitude: Double = 0.0,
                      var phone: String = "",
-                     var notes: String = "") {
+                     var notes: String = "",
+                     var category: String = ""
+                    ) {
     fun setImage(image: Bitmap, context: Context) {
         id?.let {
             ImageUtils.saveBitmapToFile(context, image, generateImageFilename(it))
+        }
+    }
+
+    fun deleteImage(context: Context) {
+        id?.let {
+            FileUtils.deleteFile(context, generateImageFilename(it))
         }
     }
 

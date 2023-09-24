@@ -12,6 +12,7 @@ import com.raywenderlich.placebook2.util.ImageUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+
 class BookmarkDetailsViewModel (application: Application) : AndroidViewModel(application) {
     private val bookmarkRepo = BookmarkRepo(getApplication())
     private var bookmarkDetailsView: LiveData<BookmarkDetailsView>? = null
@@ -21,7 +22,8 @@ class BookmarkDetailsViewModel (application: Application) : AndroidViewModel(app
         var name: String = "",
         var phone: String = "",
         var address: String = "",
-        var notes: String = ""
+        var notes: String = "",
+        var category: String = ""
     ) {
         fun getImage(context: Context) = id?.let {
             ImageUtils.loadBitmapFromFile(
@@ -43,13 +45,16 @@ class BookmarkDetailsViewModel (application: Application) : AndroidViewModel(app
             bookmark.name,
             bookmark.phone,
             bookmark.address,
-            bookmark.notes
+            bookmark.notes,
+            bookmark.category
         )
     }
     private fun mapBookmarkToBookmarkView(bookmarkId: Long) {
         val bookmark = bookmarkRepo.getLiveBookmark(bookmarkId)
-        bookmarkDetailsView = bookmark.map {repoBookmark ->
-            bookmarkToBookmarkView(repoBookmark)
+        bookmarkDetailsView = bookmark.map{ repoBookmark ->
+            repoBookmark?.let { repoBookmark ->
+                bookmarkToBookmarkView(repoBookmark)
+            }!!
         }
     }
 
@@ -60,6 +65,13 @@ class BookmarkDetailsViewModel (application: Application) : AndroidViewModel(app
         return bookmarkDetailsView
     }
 
+    fun getCategoryResourceId(category: String): Int? {
+        return bookmarkRepo.getCategoryResourceId(category)
+    }
+
+    fun getCategories(): List<String> {
+        return bookmarkRepo.categories
+    }
     private fun bookmarkViewToBookmark(bookmarkView:
                                        BookmarkDetailsView): Bookmark? {
         val bookmark = bookmarkView.id?.let {
@@ -71,8 +83,20 @@ class BookmarkDetailsViewModel (application: Application) : AndroidViewModel(app
             bookmark.phone = bookmarkView.phone
             bookmark.address = bookmarkView.address
             bookmark.notes = bookmarkView.notes
+            bookmark.category = bookmarkView.category
         }
         return bookmark
+    }
+
+    fun deleteBookmark(bookmarkDetailsView: BookmarkDetailsView) {
+        GlobalScope.launch {
+            val bookmark = bookmarkDetailsView.id?.let {
+                bookmarkRepo.getBookmark(it)
+            }
+            bookmark?.let {
+                bookmarkRepo.deleteBookmark(it)
+            }
+        }
     }
 
     fun updateBookmark(bookmarkView: BookmarkDetailsView) {
@@ -81,7 +105,6 @@ class BookmarkDetailsViewModel (application: Application) : AndroidViewModel(app
             bookmark?.let { bookmarkRepo.updateBookmark(it) }
         }
     }
-
 
 
 }
