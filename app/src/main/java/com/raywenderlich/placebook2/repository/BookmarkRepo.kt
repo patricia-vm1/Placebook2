@@ -25,7 +25,6 @@ class BookmarkRepo(context: Context) {
     fun createBookmark(): Bookmark {
         return Bookmark()
     }
-
     fun deleteBookmark(bookmark: Bookmark) {
         bookmark.deleteImage(context)
         bookmarkDao.deleteBookmark(bookmark)

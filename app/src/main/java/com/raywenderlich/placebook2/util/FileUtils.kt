@@ -8,4 +8,5 @@ object FileUtils {
         val dir = context.filesDir
         val file = File(dir, filename)
         file.delete()
-    } }
+    }
+}

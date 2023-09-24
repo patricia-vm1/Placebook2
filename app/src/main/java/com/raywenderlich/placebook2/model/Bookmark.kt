@@ -2,7 +2,6 @@ package com.raywenderlich.placebook2.model
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.media.Image
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.raywenderlich.placebook2.util.FileUtils
@@ -20,15 +19,15 @@ data class Bookmark (@PrimaryKey(autoGenerate = true) var id: Long? = null,
                      var notes: String = "",
                      var category: String = ""
                     ) {
+
+    fun deleteImage (context: Context) {
+        id?.let {
+            FileUtils.deleteFile(context, generateImageFilename(it))
+        }
+    }
     fun setImage(image: Bitmap, context: Context) {
         id?.let {
             ImageUtils.saveBitmapToFile(context, image, generateImageFilename(it))
-        }
-    }
-
-    fun deleteImage(context: Context) {
-        id?.let {
-            FileUtils.deleteFile(context, generateImageFilename(it))
         }
     }
 
