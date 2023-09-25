@@ -25,10 +25,6 @@ class BookmarkRepo(context: Context) {
     fun createBookmark(): Bookmark {
         return Bookmark()
     }
-    fun deleteBookmark(bookmark: Bookmark) {
-        bookmark.deleteImage(context)
-        bookmarkDao.deleteBookmark(bookmark)
-    }
     val allBookmarks: LiveData<List<Bookmark>>
         get() {
             return bookmarkDao.loadAll()
@@ -86,6 +82,11 @@ class BookmarkRepo(context: Context) {
 
     fun getCategoryResourceId(placeCategory: String): Int? {
         return allCategories[placeCategory]
+    }
+
+    fun deleteBookmark(bookmark: Bookmark) {
+        bookmark.deleteImage(context)
+        bookmarkDao.deleteBookmark(bookmark)
     }
 
 

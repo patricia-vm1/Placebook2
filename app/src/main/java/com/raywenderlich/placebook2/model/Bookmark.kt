@@ -20,14 +20,15 @@ data class Bookmark (@PrimaryKey(autoGenerate = true) var id: Long? = null,
                      var category: String = ""
                     ) {
 
-    fun deleteImage (context: Context) {
-        id?.let {
-            FileUtils.deleteFile(context, generateImageFilename(it))
-        }
-    }
     fun setImage(image: Bitmap, context: Context) {
         id?.let {
             ImageUtils.saveBitmapToFile(context, image, generateImageFilename(it))
+        }
+    }
+
+    fun deleteImage(context: Context) {
+        id?.let {
+            FileUtils.deleteFile(context, generateImageFilename(it))
         }
     }
 

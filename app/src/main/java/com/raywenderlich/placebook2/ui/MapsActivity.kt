@@ -13,6 +13,8 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.location.Location
+import android.view.WindowManager
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -150,6 +152,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun displayPoi(pointOfInterest: PointOfInterest) {
         displayPoiGetPlaceStep(pointOfInterest)
+        showProgress()
     }
 
     private fun displayPoiGetPlaceStep(pointOfInterest: PointOfInterest) {
@@ -182,6 +185,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                                 exception.message + ", " +
                                 "statusCode: " + statusCode
                     )
+                    hideProgress()
                 }
             }
     }
@@ -218,10 +222,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     )
 
                 }
+            hideProgress()
             }
     }
 
     private fun displayPoiDisplayStep(place: Place, photo: Bitmap?) {
+        hideProgress()
         val marker = map.addMarker(MarkerOptions()
             .position(place.latLng as LatLng)
             .title(place.name)
@@ -371,9 +377,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     location.latitude = place.latLng?.latitude ?: 0.0
                     location.longitude = place.latLng?.longitude ?: 0.0
                     updateMapToLocation(location)
+                    showProgress()
                     displayPoiGetPhotoStep(place)
                 }
-        } }
+        }
+    }
+
+    private fun disableUserInteraction() {
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
+    private fun enableUserInteraction() {
+        window.clearFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
+
+    private fun showProgress() {
+        databinding.mainMapView.progressBar.visibility = ProgressBar.VISIBLE
+        disableUserInteraction()
+    }
+    private fun hideProgress() {
+        databinding.mainMapView.progressBar.visibility = ProgressBar.GONE
+        enableUserInteraction()
+    }
 
     companion object {
         const val EXTRA_BOOKMARK_ID = "com.raywenderlich.placebook2.EXTRA_BOOKMARK_ID"

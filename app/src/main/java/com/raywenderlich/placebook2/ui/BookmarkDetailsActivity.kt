@@ -21,6 +21,7 @@ import com.raywenderlich.placebook2.util.ImageUtils
 import com.raywenderlich.placebook2.viewmodel.BookmarkDetailsViewModel
 
 import java.io.File
+import java.net.URLEncoder
 
 class BookmarkDetailsActivity : AppCompatActivity(),
     PhotoOptionDialogFragment.PhotoOptionDialogListener{
@@ -36,6 +37,7 @@ class BookmarkDetailsActivity : AppCompatActivity(),
             R.layout.activity_bookmark_details)
         setupToolbar()
         getIntentData()
+        setupFab()
     }
     private fun setupToolbar() {
         setSupportActionBar(databinding.toolbar)
@@ -144,17 +146,6 @@ class BookmarkDetailsActivity : AppCompatActivity(),
         }
     }
 
-    private fun deleteBookmark()
-    {
-        val bookmarkView = bookmarkDetailsView ?: return
-        AlertDialog.Builder(this)
-            .setMessage("Delete?")
-            .setPositiveButton("Ok") { _, _ ->
-                bookmarkDetailsViewModel.deleteBookmark(bookmarkView)
-                finish() }
-            .setNegativeButton("Cancel", null)
-            .create().show()
-    }
 
     private fun getImageWithPath(filePath: String) =
         ImageUtils.decodeFileToSize(
@@ -226,6 +217,46 @@ class BookmarkDetailsActivity : AppCompatActivity(),
                 }
                 }
         }
+    }
+
+    private fun deleteBookmark()
+    {
+        val bookmarkView = bookmarkDetailsView ?: return
+        AlertDialog.Builder(this)
+            .setMessage("Delete?")
+            .setPositiveButton("Ok") { _, _ ->
+                bookmarkDetailsViewModel.deleteBookmark(bookmarkView)
+                finish() }
+            .setNegativeButton("Cancel", null)
+            .create().show()
+    }
+
+    private fun sharePlace() {
+        val bookmarkView = bookmarkDetailsView ?: return
+        var mapUrl = ""
+        if (bookmarkView.placeId == null) {
+            val location = URLEncoder.encode("${bookmarkView.latitude},"
+                    + "${bookmarkView.longitude}", "utf-8")
+            mapUrl = "https://www.google.com/maps/dir/?api=1" +
+                    "&destination=$location"
+        } else {
+            val name = URLEncoder.encode(bookmarkView.name, "utf-8")
+            mapUrl = "https://www.google.com/maps/dir/?api=1" +
+                    "&destination=$name&destination_place_id=" +
+                    "${bookmarkView.placeId}"
+        }
+        val sendIntent = Intent()
+        sendIntent.action = Intent.ACTION_SEND
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+            "Check out ${bookmarkView.name} at:\n$mapUrl")
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT,
+            "Sharing ${bookmarkView.name}")
+        sendIntent.type = "text/plain"
+        startActivity(sendIntent)
+    }
+
+    private fun setupFab() {
+        databinding.fab.setOnClickListener { sharePlace() }
     }
 
 
