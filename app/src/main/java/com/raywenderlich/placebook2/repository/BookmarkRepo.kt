@@ -8,7 +8,7 @@ import com.raywenderlich.placebook2.db.BookmarkDao
 import com.raywenderlich.placebook2.db.PlaceBookDatabase
 import com.raywenderlich.placebook2.model.Bookmark
 
-class BookmarkRepo(context: Context) {
+class BookmarkRepo(private val context: Context) {
 
     private val db = PlaceBookDatabase.getInstance(context)
     private val bookmarkDao: BookmarkDao = db.bookmarkDao()
